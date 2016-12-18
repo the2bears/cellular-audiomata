@@ -1,36 +1,10 @@
 # cellular-audiomata
 
-FIXME: description
-
-## Installation
-
-Download from http://example.com/FIXME.
-
-## Usage
-
-FIXME: explanation
-
-    $ java -jar cellular-audiomata-0.1.0-standalone.jar [args]
-
-## Options
-
-FIXME: listing of options this app accepts.
-
-## Examples
-
-...
-
-### Bugs
-
-...
-
-### Any Other Sections
-### That You Think
-### Might be Useful
+This will be a test at first, to answer a question I've had for a while: Can Conway's Life be used as a music sequencer?
 
 ## License
 
-Copyright © 2016 FIXME
+Copyright © 2016 William Swaney
 
 Distributed under the Eclipse Public License either version 1.0 or (at
 your option) any later version.
