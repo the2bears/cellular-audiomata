@@ -1,12 +1,22 @@
 (ns cellular-audiomata.display
-  (:require [lanterna.screen :as console]))
+  (:require [clojure.pprint :refer :all]
+            [lanterna.screen :as console]))
 
 (def scr (console/get-screen :text))
 
+(defn start []
+  (do
+    (console/start scr)
+    (console/clear scr)))
+
+(defn stop []
+  (console/stop scr))
+
 (defn render [world]
-    (do (console/start scr)
-      (console/put-string scr 10 10 "Hello,Conway!")
-      (console/put-string scr 10 11 "Press any key to exit!")
+    (do
+      (console/clear scr)
+      (doseq [[x y] world]
+        (console/put-string scr (+ 10 x) (+ 10 y) "*"))
       (console/redraw scr)
       (console/get-key-blocking scr)
-    (console/stop scr)))
+      ))

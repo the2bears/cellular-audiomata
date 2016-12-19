@@ -4,4 +4,11 @@
   (:gen-class))
 
 (defn -main [& args]
-  (display/render 1))
+  (do
+    (display/start)
+    (loop [life conway/glider
+           count 20]
+      (display/render life)
+      (if (not= 0 count)
+        (recur (conway/conway-stepper life) (dec count))
+        (display/stop)))))

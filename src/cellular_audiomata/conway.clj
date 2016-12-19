@@ -46,7 +46,7 @@
         (map println)))
 
 (conway-stepper glider2)
-
+(seq glider)
 (conway [10 10] glider 3)
 
 (create-world 10 10 glider)
@@ -58,6 +58,6 @@
   loc))
 c
 
-(if (glider [3 2]) true false)
+(if (glider [2 2]) true false)
 
 (if (#{2 3} 4) true false)
