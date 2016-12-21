@@ -6,8 +6,11 @@
 
 (defn start []
   (do
+    ()
     (console/start scr)
-    (console/clear scr)))
+    (console/clear scr)
+    (console/get-key scr)
+    (console/redraw scr)))
 
 (defn stop []
   (console/stop scr))
@@ -18,5 +21,4 @@
       (doseq [[x y] world]
         (console/put-string scr (+ 10 x) (+ 10 y) "*"))
       (console/redraw scr)
-      (console/get-key-blocking scr)
-      ))
+      (console/get-key scr)))

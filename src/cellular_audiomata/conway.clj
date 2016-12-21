@@ -33,7 +33,7 @@
 (def glider2 #{[3 0] [3 1] [3 2] [2 2] [1 1]})
 (def light-spaceship #{[2 0] [4 0] [1 1] [1 2] [1 3] [4 3] [1 4] [2 4] [3 4]})
 
-; steppers
+; steppers - This is the main function created with the standard rules
 (def conway-stepper (stepper neighbours #{3} #{2 3}))
 
 (defn conway

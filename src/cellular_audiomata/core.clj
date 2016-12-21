@@ -6,9 +6,10 @@
 (defn -main [& args]
   (do
     (display/start)
-    (loop [life conway/glider
-           count 20]
-      (display/render life)
-      (if (not= 0 count)
-        (recur (conway/conway-stepper life) (dec count))
-        (display/stop)))))
+    (loop [life conway/glider]
+      (let [k (display/render life)]
+        (if (not= \q k)
+          (do
+            (Thread/sleep 300)
+            (recur (conway/conway-stepper life)))
+          (display/stop))))))
