@@ -1,12 +1,13 @@
 (ns cellular-audiomata.core
   (:require [cellular-audiomata.conway :as conway]
-            [cellular-audiomata.display :as display])
+            [cellular-audiomata.display :as display]
+            [cellular-audiomata.io :as io])
   (:gen-class))
 
 (defn -main [& args]
   (do
     (display/start)
-    (loop [life conway/glider]
+    (loop [life (io/load-from-file "./resources/glider.lif")]
       (let [k (display/render life)]
         (if (not= \q k)
           (do
