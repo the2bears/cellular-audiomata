@@ -6,7 +6,6 @@
 
 (defn start []
   (do
-    ()
     (console/start scr)
     (console/clear scr)
     (console/get-key scr)
@@ -16,9 +15,11 @@
   (console/stop scr))
 
 (defn render [world]
-    (do
-      (console/clear scr)
-      (doseq [[x y] world]
-        (console/put-string scr (+ 10 x) (+ 10 y) "*"))
-      (console/redraw scr)
-      (console/get-key scr)))
+  (do
+    (console/clear scr)
+    (doseq [[x y] world]
+      (console/put-string scr (+ 10 x) (+ 10 y) "*"))
+    (let [[_ y] (console/get-size scr)]
+      (console/move-cursor scr 0 (dec y)))
+    (console/redraw scr)
+    (console/get-key scr)))
