@@ -7,7 +7,7 @@
 (defn -main [& args]
   (do
     (display/start)
-    (loop [life (io/load-from-file "./resources/glider.lif")]
+    (loop [life (io/load-from-file "./resources/glider.lif" [30 10])]
       (let [k (display/render life)]
         (if (not= \q k)
           (do
