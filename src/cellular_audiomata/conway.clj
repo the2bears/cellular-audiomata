@@ -11,10 +11,10 @@
 
 (defn stepper
   "Returns a step function for Life-like cell automata.
-   neighbours takes a location and return a sequential collection
-   of locations. survive? and birth? are predicates on the number
-   of living neighbours."
-  [neighbours birth? survive?]
+  neighbours takes a location and return a sequential collection
+  of locations. survive? and birth? are predicates on the number
+  of living neighbours."
+  [{:keys [neighbours birth? survive?] :as config}]
   (fn [cells]
     (set (for [[loc n] (frequencies (mapcat neighbours cells))
                :when (if (cells loc) (survive? n) (birth? n))]
@@ -26,4 +26,5 @@
 (def light-spaceship #{[2 0] [4 0] [1 1] [1 2] [1 3] [4 3] [1 4] [2 4] [3 4]})
 
 ; steppers - This is the main function created with the standard rules
-(def conway-stepper (stepper neighbours #{3} #{2 3}))
+(def conway-rules {:neighbours neighbours :birth? #{3} :survive? #{2 3}})
+(def conway-stepper (stepper conway-rules)); #{3} #{2 3}))
