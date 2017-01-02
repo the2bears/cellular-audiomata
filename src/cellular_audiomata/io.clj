@@ -14,10 +14,11 @@
   ([f [off-x off-y]]
    (with-open [rdr (clojure.java.io/reader f)]
      (let [s (line-seq rdr)]
-       (if (= life-1-06-header (first s))
-         (->>(load-life-1-06 (rest s))
-             (map (fn[[x y]] [(+ x off-x)(+ y off-y)]))
-             (into #{}))
-         (prn "File Format Not Supported."))))))
+       (cond (= life-1-06-header (first s))
+             (->>(load-life-1-06 (rest s))
+                 (map (fn[[x y]] [(+ x off-x)(+ y off-y)]))
+                 (into #{}))
+             :else
+             (prn "File Format Not Supported."))))))
 
 ;(load-from-file "./resources/glider.lif" [10 10])

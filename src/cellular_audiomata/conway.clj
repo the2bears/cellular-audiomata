@@ -3,14 +3,6 @@
 
 (ns cellular-audiomata.conway)
 
-(defn create-world
-  "Creates rectangular world with the specified width and height.
-  Optionally takes coordinates of living cells."
-  [w h & living-cells]
-  (vec (for [y (range w)]
-         (vec (for [x (range w)]
-                (if (contains? (first living-cells) [y x]) "X" " "))))))
-
 (defn neighbours
   "Determines all the neighbours of a given coordinate"
   [[x y]]
@@ -35,29 +27,3 @@
 
 ; steppers - This is the main function created with the standard rules
 (def conway-stepper (stepper neighbours #{3} #{2 3}))
-
-(defn conway
-  "Generates world of given size with initial pattern in specified generation"
-  [[w h] pattern iterations]
-   (->> (iterate conway-stepper pattern)
-        (drop iterations)
-        first
-        (create-world w h)
-        (map println)))
-
-(conway-stepper glider2)
-(seq glider)
-(conway [10 10] glider 3)
-
-(create-world 10 10 glider)
-
-(mapcat neighbours glider)
-(frequencies (mapcat neighbours glider))
-
-(def c (for [[loc n] (frequencies (mapcat neighbours glider)) :when (if (glider loc) (#{2 3} n) (#{3} n))]
-  loc))
-c
-
-(if (glider [2 2]) true false)
-
-(if (#{2 3} 4) true false)

@@ -7,10 +7,10 @@
 (defn -main [& args]
   (do
     (display/start)
-    (loop [life (io/load-from-file "./resources/glider.lif" [30 10])]
+    (loop [life (io/load-from-file "./resources/glidersbythedozen.lif" [60 20])]
       (let [k (display/render life)]
         (if (not= \q k)
           (do
-            (Thread/sleep 300)
+            (Thread/sleep 150)
             (recur (conway/conway-stepper life)))
           (display/stop))))))
