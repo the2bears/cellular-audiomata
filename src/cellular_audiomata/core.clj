@@ -4,6 +4,8 @@
             [cellular-audiomata.io :as io])
   (:gen-class))
 
+(def conway conway/conway-stepper)
+
 (defn -main [& args]
   (do
     (display/start)
@@ -12,5 +14,5 @@
         (if (not= \q k)
           (do
             (Thread/sleep 150)
-            (recur (conway/conway-stepper life)))
+            (recur (conway life)))
           (display/stop))))))
