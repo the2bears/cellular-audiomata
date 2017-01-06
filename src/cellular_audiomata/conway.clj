@@ -16,9 +16,12 @@
   of living neighbours."
   [{:keys [neighbours birth? survive?] :as config}]
   (fn [cells]
-    (set (for [[loc n] (frequencies (mapcat neighbours cells))
-               :when (if (cells loc) (survive? n) (birth? n))]
-           loc))))
+    (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours cells))
+                              :when (if (cells loc) (survive? n) (birth? n))]
+                          loc))]
+      (->> next-gen
+           (filter (fn[[x y]](and (< x 40) (< y 20) (< 0 x) (< 0 y))))
+           (set)))))
 
 ; patterns
 (def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
