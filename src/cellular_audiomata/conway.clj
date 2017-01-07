@@ -3,7 +3,7 @@
 
 (ns cellular-audiomata.conway)
 
-(defn neighbours
+(defn- neighbours
   "Determines all the neighbours of a given coordinate"
   [[x y]]
   (for [dx [-1 0 1] dy [-1 0 1] :when (not= 0 dx dy)]
@@ -14,13 +14,19 @@
   neighbours takes a location and return a sequential collection
   of locations. survive? and birth? are predicates on the number
   of living neighbours."
-  [{:keys [neighbours birth? survive?] :as config}]
+  [{:keys [neighbours birth? survive? x-min x-max y-min y-max]
+    :or {x-min 0 x-max 40 y-min 0 y-max 20} :as config}]
   (fn [cells]
     (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours cells))
                               :when (if (cells loc) (survive? n) (birth? n))]
                           loc))]
       (->> next-gen
-           (filter (fn[[x y]](and (< x 40) (< y 20) (< 0 x) (< 0 y))))
+           (filter (fn[[x y]]
+                     (and
+                       (< x x-max)
+                       (< y y-max)
+                       (< x-min x)
+                       (< y-min y))))
            (set)))))
 
 ; patterns
