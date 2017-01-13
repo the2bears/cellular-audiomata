@@ -4,7 +4,7 @@
             [cellular-audiomata.io :as io])
   (:gen-class))
 
-(def boundaries {:x-min 0 :x-max 40 :y-min 0 :y-max 20})
+(def boundaries {:observe-borders true :x-min 0 :x-max 40 :y-min 0 :y-max 20})
 (def conway (conway/stepper (merge conway/conway-rules boundaries)))
 
 (defn -main [& args]
