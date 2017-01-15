@@ -32,14 +32,17 @@
     (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours alive))
                               :when (if (alive loc) (survive? n) (birth? n))]
                           loc))
-          births (cset/difference next-gen alive)]
+          births (cset/difference next-gen alive)
+          deaths (cset/difference alive next-gen)
+          survived (cset/difference next-gen births)]
       (if observe-borders
-        {:alive (->> next-gen
-                        (filter (filter-borders config))
-                        (set))}
-        {:alive next-gen}))))
+        {:births births :deaths deaths :survived survived :alive (->> next-gen
+                                                                      (filter (filter-borders config))
+                                                                      (set))}
+        {:births births :deaths deaths :survived survived :alive next-gen}))))
 
 ; patterns
+(def blinker #{[2 1] [2 2] [2 3]})
 (def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
 (def glider2 #{[3 0] [3 1] [3 2] [2 2] [1 1]})
 (def light-spaceship #{[2 0] [4 0] [1 1] [1 2] [1 3] [4 3] [1 4] [2 4] [3 4]})
