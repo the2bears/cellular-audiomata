@@ -8,9 +8,10 @@
 (def conway (conway/stepper (merge conway/conway-rules boundaries)))
 
 (defn -main [& args]
-  (do
+  (let [pattern (io/load-from-file "./resources/glider.lif" [20 10])
+        life-start {:alive pattern}]
     (display/start)
-    (loop [life (io/load-from-file "./resources/glider.lif" [20 10])]
+    (loop [life life-start]
       (let [k (display/render life)]
         (if (not= \q k)
           (do

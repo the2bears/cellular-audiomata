@@ -14,10 +14,10 @@
 (defn stop []
   (console/stop scr))
 
-(defn render [world]
+(defn render [{:keys [alive] :as world}]
   (do
     (console/clear scr)
-    (doseq [[x y] world]
+    (doseq [[x y] alive]
       (console/put-string scr (+ 10 x) (+ 10 y) "*"))
     (let [[_ y] (console/get-size scr)]
       (console/move-cursor scr 0 (dec y)))

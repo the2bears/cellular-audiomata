@@ -1,7 +1,8 @@
 ;Thanks to Manuel Rotta for this interesting approach to Conway's Life. Code is inspired and adapted from his blog post:
 ;http://programmablelife.blogspot.com/2012/08/conways-game-of-life-in-clojure.html
 
-(ns cellular-audiomata.conway)
+(ns cellular-audiomata.conway
+  (:require [clojure.set :as cset]))
 
 (defn- neighbours
   "Determines all the neighbours of a given coordinate"
@@ -27,15 +28,16 @@
   of living neighbours."
   [{:keys [birth? survive? observe-borders x-min x-max y-min y-max]
     :or {neighbours neighbours x-min 0 x-max 40 y-min 0 y-max 20} :as config}]
-  (fn [cells]
-    (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours cells))
-                              :when (if (cells loc) (survive? n) (birth? n))]
-                          loc))]
+  (fn [{:keys [alive] :as life}]
+    (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours alive))
+                              :when (if (alive loc) (survive? n) (birth? n))]
+                          loc))
+          births (cset/difference next-gen alive)]
       (if observe-borders
-        (->> next-gen
-             (filter (filter-borders config))
-             (set))
-        next-gen))))
+        {:alive (->> next-gen
+                        (filter (filter-borders config))
+                        (set))}
+        {:alive next-gen}))))
 
 ; patterns
 (def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
