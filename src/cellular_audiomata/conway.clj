@@ -28,18 +28,19 @@
   of living neighbours."
   [{:keys [birth? survive? observe-borders x-min x-max y-min y-max]
     :or {neighbours neighbours x-min 0 x-max 40 y-min 0 y-max 20} :as config}]
-  (fn [{:keys [alive] :as life}]
-    (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours alive))
-                              :when (if (alive loc) (survive? n) (birth? n))]
-                          loc))
-          births (cset/difference next-gen alive)
-          deaths (cset/difference alive next-gen)
-          survived (cset/difference next-gen births)]
-      (if observe-borders
-        {:births births :deaths deaths :survived survived :alive (->> next-gen
-                                                                      (filter (filter-borders config))
-                                                                      (set))}
-        {:births births :deaths deaths :survived survived :alive next-gen}))))
+  (let [f-b (filter-borders config)]
+    (fn [{:keys [alive] :as life}]
+      (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours alive))
+                                :when (if (alive loc) (survive? n) (birth? n))]
+                            loc))
+            births (cset/difference next-gen alive)
+            deaths (cset/difference alive next-gen)
+            survived (cset/difference next-gen births)]
+        (if observe-borders
+          {:births births :deaths deaths :survived survived :alive (->> next-gen
+                                                                        (filter f-b)
+                                                                        (set))}
+          {:births births :deaths deaths :survived survived :alive next-gen})))))
 
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
