@@ -16,10 +16,8 @@
     :or {x-min 0 x-max 40 y-min 0 y-max 20} :as config}]
   (fn[[x y]]
     (and
-      (< x x-max)
-      (< y y-max)
-      (< x-min x)
-      (< y-min y))))
+      (<= x-min x x-max)
+      (<= y-min y y-max))))
 
 (defn stepper
   "Returns a step function for Life-like cell automata.
