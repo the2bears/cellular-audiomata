@@ -24,9 +24,9 @@
   neighbours takes a location and return a sequential collection
   of locations. survive? and birth? are predicates on the number
   of living neighbours."
-  [{:keys [birth? survive? observe-borders x-min x-max y-min y-max]
+  [{:keys [birth? survive? observe-borders? x-min x-max y-min y-max]
     :or {neighbours neighbours x-min 0 x-max 40 y-min 0 y-max 20} :as config}]
-  (let [f-b (filter-borders config)]
+  (let [f-b (if observe-borders? (filter-borders config) identity)]
     (fn [{:keys [alive] :as life}]
       (let [next-gen (set (for [[loc n] (frequencies (mapcat neighbours alive))
                                 :when (if (alive loc) (survive? n) (birth? n))]
@@ -34,7 +34,7 @@
             births (cset/difference next-gen alive)
             deaths (cset/difference alive next-gen)
             survived (cset/difference next-gen births)]
-        (if observe-borders
+        (if observe-borders?
           {:births births :deaths deaths :survived survived :alive (->> next-gen
                                                                         (filter f-b)
                                                                         (set))}
