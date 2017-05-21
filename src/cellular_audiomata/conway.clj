@@ -4,6 +4,8 @@
 (ns cellular-audiomata.conway
   (:require [clojure.set :as cset]))
 
+(defonce ^:private registry-ref (atom {}))
+
 (defn- neighbours
   "Determines all the neighbours of a given coordinate"
   [[x y]]
@@ -39,6 +41,15 @@
                                                                         (filter f-b)
                                                                         (set))}
           {:births births :deaths deaths :survived survived :alive next-gen})))))
+
+(defrecord pattern [name cells])
+
+(defn create-pattern 
+  ([{:keys [name cells]}]
+   (create-pattern name cells))
+  ([name cells]
+   (->pattern name cells)))
+
 
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
