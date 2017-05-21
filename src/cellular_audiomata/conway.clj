@@ -4,7 +4,10 @@
 (ns cellular-audiomata.conway
   (:require [clojure.set :as cset]))
 
-(defonce ^:private registry-ref (atom {}))
+(defonce ^:private pattern-registry-ref (atom {}))
+
+(defn pattern-registry []
+  @pattern-registry-ref)
 
 (defn- neighbours
   "Determines all the neighbours of a given coordinate"
@@ -48,8 +51,9 @@
   ([{:keys [name cells]}]
    (create-pattern name cells))
   ([name cells]
-   (->pattern name cells)))
-
+   (let [pattern (->pattern name cells)]
+     (swap! pattern-registry-ref assoc name pattern)
+     pattern)))
 
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
