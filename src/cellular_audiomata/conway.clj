@@ -61,10 +61,11 @@
   (add (rotate pattern-name 90 :around x2 y2) :at x y)
   (add pattern-name :at x y :flip :vertical :on y2)
   (add (flip pattern-name :vertical :on y2) :at x y)
-  (generate-grid [[:add {:pattern pattern-name :x x :y y 
-                         :rotate 90 :cx x2 :cy y2}]
-                  [:add {:pattern pattern-name :x x :y y
-                         :flip-vertical y2}]]))
+  (generate-grid [[:pattern {:name pattern-name :x x :y y 
+                             :rotate 90 :cx x2 :cy y2}]
+                  [:pattern {:load resource :as pattern-name2 :x x :y y
+                             :flip-vertical y2}]]))
+                  
 
 (defn translate [[x y] dx dy]
   [(+ x dx) (+ y dy)])
