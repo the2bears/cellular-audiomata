@@ -34,13 +34,13 @@
      (->> (map #(rotate* % d cx cy) s)
           (set)))))
 
-(defprotocol IPattern
+(defprotocol Pattern
   (add [a b])
   (translate [p dx dy])
   (rotate [p d] [p d cx cy]))
 
 (extend clojure.lang.PersistentHashSet
-  IPattern
+  Pattern
   {
     :add (fn [a b](set/union a b))
     :translate (fn [p dx dy](translate-pattern p dx dy))
@@ -63,7 +63,7 @@
                              :rotate 90 :cx x2 :cy y2}]
                   [:pattern {:load resource :as pattern-name2 :x x :y y
                              :flip-vertical y2}]]))
-                  
+    
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
 (def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
