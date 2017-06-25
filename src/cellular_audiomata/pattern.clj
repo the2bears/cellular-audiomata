@@ -1,17 +1,55 @@
-(ns cellular-audiomata.pattern)
+(ns cellular-audiomata.pattern
+  (:require [clojure.set :refer [union] :as set]))
 
 (defonce ^:private pattern-registry-ref (atom {}))
 
 (defn pattern-registry []
   @pattern-registry-ref)
 
-(defrecord pattern [name cells])
+(defn- translate* [[x y] dx dy]
+  [(+ x dx) (+ y dy)])
 
-(defn create-pattern 
-  ([{:keys [name cells]}]
-   (create-pattern name cells))
+(defn translate-pattern [cells dx dy]
+  (let [s (seq cells)]
+    (->> (map #(translate* % dx dy) s)
+         (set))))  
+
+(defn- rotate*
+  ([[x y] d]
+   (rotate* [x y] d 0 0))
+  ([[x y] d cx cy]
+   (let [[x y] (translate* [x y] (- cx) (- cy))
+         p (case d
+              90 [y (- x)] 
+              180 [(- x) (- y)]
+              270 [(- y) x]
+              default [x y])]
+      (translate* p cx cy))))  
+
+(defn rotate-pattern
+  ([cells d]
+   (rotate-pattern cells d 0 0)) 
+  ([cells d cx cy]
+   (let [s (seq cells)]
+     (->> (map #(rotate* % d cx cy) s)
+          (set)))))
+
+(defprotocol IPattern
+  (add [a b])
+  (translate [p dx dy])
+  (rotate [p d] [p d cx cy]))
+
+(extend clojure.lang.PersistentHashSet
+  IPattern
+  {
+    :add (fn [a b](set/union a b))
+    :translate (fn [p dx dy](translate-pattern p dx dy))
+    :rotate (fn ([p d](rotate p d 0 0))
+                ([p d cx cy](rotate-pattern p d cx cy)))})
+
+(defn store-pattern 
   ([name cells]
-   (let [pattern (->pattern name cells)]
+   (let [pattern (into #{} cells)]
      (swap! pattern-registry-ref assoc name pattern)
      pattern)))
 
@@ -26,35 +64,6 @@
                   [:pattern {:load resource :as pattern-name2 :x x :y y
                              :flip-vertical y2}]]))
                   
-
-(defn translate [[x y] dx dy]
-  [(+ x dx) (+ y dy)])
-
-(defn translate-cells [cells dx dy]
-  (let [s (seq cells)]
-    (->> (map #(translate % dx dy) s)
-         (set))))  
-
-(defn rotate
-  ([[x y] d]
-   (rotate [x y] d 0 0))
-  ([[x y] d cx cy]
-   (let [[x y] (translate [x y] (- cx) (- cy))
-         p (case d
-              90 [y (- x)] 
-              180 [(- x) (- y)]
-              270 [(- y) x]
-              default [x y])]
-      (translate p cx cy))))  
-
-(defn rotate-cells
-  ([cells d]
-   (rotate-cells cells d 0 0)) 
-  ([cells d cx cy]
-   (let [s (seq cells)]
-     (->> (map #(rotate % d cx cy) s)
-          (set)))))
-
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
 (def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
