@@ -4,7 +4,7 @@
             [cellular-audiomata.io :as io])
   (:gen-class))
 
-(def boundaries {:observe-borders true :x-min 0 :x-max 20 :y-min 0 :y-max 20})
+(def boundaries {:observe-borders? false :x-min 0 :x-max 20 :y-min 0 :y-max 20})
 (def conway (conway/stepper (merge conway/conway-rules boundaries)))
 
 (defn system-exit []
@@ -22,7 +22,9 @@
           (do
             (Thread/sleep 150)
             (let [next-gen (conway life)]
+              ;(display/handle-triggers next-gen)
               (recur next-gen)))
           (do
+            (println :exiting)
             (display/stop-display)
             (system-exit)))))))

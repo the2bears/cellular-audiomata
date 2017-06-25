@@ -4,11 +4,6 @@
 (ns cellular-audiomata.conway
   (:require [clojure.set :as cset]))
 
-(defonce ^:private pattern-registry-ref (atom {}))
-
-(defn pattern-registry []
-  @pattern-registry-ref)
-
 (defn- neighbours
   "Determines all the neighbours of a given coordinate"
   [[x y]]
@@ -45,44 +40,6 @@
                                                                         (set))}
           {:births births :deaths deaths :survived survived :alive next-gen})))))
 
-(defrecord pattern [name cells])
-
-(defn create-pattern 
-  ([{:keys [name cells]}]
-   (create-pattern name cells))
-  ([name cells]
-   (let [pattern (->pattern name cells)]
-     (swap! pattern-registry-ref assoc name pattern)
-     pattern)))
-
-(comment
-  "2nd example of each seems better. Check hiccup and play-cljs"
-  (add pattern-name :at x y :rotate 90 :around x2 y2)
-  (add (rotate pattern-name 90 :around x2 y2) :at x y)
-  (add pattern-name :at x y :flip :vertical :on y2)
-  (add (flip pattern-name :vertical :on y2) :at x y)
-  (generate-grid [[:pattern {:name pattern-name :x x :y y 
-                             :rotate 90 :cx x2 :cy y2}]
-                  [:pattern {:load resource :as pattern-name2 :x x :y y
-                             :flip-vertical y2}]]))
-                  
-
-(defn translate [[x y] dx dy]
-  [(+ x dx) (+ y dy)])
-
-(defn rotate [[x y] d cx cy]
-  (let [[x y] (translate [x y] (- cx) (- cy))
-        p (case d
-             90 [y (- x)] 
-             180 [(- x) (- y)]
-             270 [(- y) x]
-             default [x y])]
-     (translate p cx cy)))  
-
-(defn rotate-cells [cells d cx cy]
-  (let [s (seq cells)]
-    (->> (map #(rotate % d cx cy) s)
-         (set))))
 
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
