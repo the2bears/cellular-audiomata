@@ -45,11 +45,24 @@
      (->> (map #(rotate* % d cx cy) s)
           (set)))))
 
+(defn- flip* [[x y] axis a]
+  (let [x? (= axis :x)
+        y? (not x?)
+        d (if x? (- a x) (- a y))]
+    [(if x? (+ a d) x) (if y? (+ a d) y)]))
+
+(defn flip-pattern [p axis a]
+  (let [p (if (instance? String p) (get-pattern p) p)
+        s (seq p)]
+    (->> (map #(flip* % axis a) s)
+         (set))))    
+
 (defprotocol Pattern
   (add [a b])
   (translate [p dx dy])
   (rotate [p d] 
-          [p d cx cy]))
+          [p d cx cy])
+  (flip [p axis a]))
 
 (extend-protocol Pattern
   java.lang.String
@@ -57,12 +70,13 @@
     (translate [p dx dy](translate-pattern p dx dy))
     (rotate ([p d](rotate p d 0 0))
             ([p d cx cy](rotate-pattern p d cx cy)))
+    (flip [p axis a](flip-pattern p axis a))
   clojure.lang.PersistentHashSet
     (add [a b](add* a b))
     (translate [p dx dy](translate-pattern p dx dy))
     (rotate ([p d](rotate p d 0 0))
-            ([p d cx cy](rotate-pattern p d cx cy))))
-  
+            ([p d cx cy](rotate-pattern p d cx cy)))
+    (flip [p axis a](flip-pattern p axis a)))
  
 (defn store-pattern 
   ([name p]
