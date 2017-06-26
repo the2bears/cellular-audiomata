@@ -6,11 +6,21 @@
 (defn pattern-registry []
   @pattern-registry-ref)
 
+(defn- get-pattern [n]
+  ((pattern-registry) n #{}))
+
+(defn- add*
+  [a b]
+  (let [a (if (instance? String a) (get-pattern a) a)
+        b (if (instance? String b) (get-pattern b) b)]
+    (set/union a b)))
+
 (defn- translate* [[x y] dx dy]
   [(+ x dx) (+ y dy)])
 
-(defn translate-pattern [cells dx dy]
-  (let [s (seq cells)]
+(defn translate-pattern [p dx dy]
+  (let [p (if (instance? String p) (get-pattern p) p)
+        s (seq p)]
     (->> (map #(translate* % dx dy) s)
          (set))))  
 
@@ -23,33 +33,40 @@
               90 [y (- x)] 
               180 [(- x) (- y)]
               270 [(- y) x]
-              default [x y])]
+              [x y])]
       (translate* p cx cy))))  
 
 (defn rotate-pattern
-  ([cells d]
-   (rotate-pattern cells d 0 0)) 
-  ([cells d cx cy]
-   (let [s (seq cells)]
+  ([p d]
+   (rotate-pattern p d 0 0)) 
+  ([p d cx cy]
+   (let [p (if (instance? String p) (get-pattern p) p)
+         s (seq p)]
      (->> (map #(rotate* % d cx cy) s)
           (set)))))
 
 (defprotocol Pattern
   (add [a b])
   (translate [p dx dy])
-  (rotate [p d] [p d cx cy]))
+  (rotate [p d] 
+          [p d cx cy]))
 
-(extend clojure.lang.PersistentHashSet
-  Pattern
-  {
-    :add (fn [a b](set/union a b))
-    :translate (fn [p dx dy](translate-pattern p dx dy))
-    :rotate (fn ([p d](rotate p d 0 0))
-                ([p d cx cy](rotate-pattern p d cx cy)))})
-
+(extend-protocol Pattern
+  java.lang.String
+    (add [a b] (add* a b))
+    (translate [p dx dy](translate-pattern p dx dy))
+    (rotate ([p d](rotate p d 0 0))
+            ([p d cx cy](rotate-pattern p d cx cy)))
+  clojure.lang.PersistentHashSet
+    (add [a b](add* a b))
+    (translate [p dx dy](translate-pattern p dx dy))
+    (rotate ([p d](rotate p d 0 0))
+            ([p d cx cy](rotate-pattern p d cx cy))))
+  
+ 
 (defn store-pattern 
-  ([name cells]
-   (let [pattern (into #{} cells)]
+  ([name p]
+   (let [pattern (into #{} p)]
      (swap! pattern-registry-ref assoc name pattern)
      pattern)))
 
