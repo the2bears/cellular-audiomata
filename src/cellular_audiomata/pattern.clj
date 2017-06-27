@@ -6,6 +6,9 @@
 (defn pattern-registry []
   @pattern-registry-ref)
 
+(defn clear-registry []
+  (reset! pattern-registry-ref {}))
+
 (defn- get-pattern [n]
   ((pattern-registry) n #{}))
 
