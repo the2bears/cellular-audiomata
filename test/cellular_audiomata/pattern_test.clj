@@ -16,6 +16,10 @@
          blinker)))
 
 (deftest test-add []
+  (is (= (add blinker)
+         blinker))
+  (is (= (add "blinker")
+         blinker))
   (is (= (add blinker glider) 
          (set/union blinker glider)))
   (is (= (add "blinker" glider)

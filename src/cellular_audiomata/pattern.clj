@@ -13,6 +13,9 @@
   ((pattern-registry) n #{}))
 
 (defn add
+  ([a]
+   (let [a (if (instance? String a) (get-pattern a) a)]
+     a))
   ([a b]
    (let [a (if (instance? String a) (get-pattern a) a)
          b (if (instance? String b) (get-pattern b) b)]
