@@ -1,10 +1,12 @@
 (ns cellular-audiomata.pattern-test
-  (:require [clojure.test :refer :all]
+  (:require [clojure.set :as set]
+            [clojure.test :refer :all]
             [cellular-audiomata.pattern :refer :all]))
   
 (defn pattern-test-fixture [f]
   (clear-registry)
   (store-pattern "blinker" blinker)
+  (store-pattern "glider" glider)
   (f))
 
 (use-fixtures :each pattern-test-fixture)
@@ -13,6 +15,15 @@
   (is (= (store-pattern "blinker" blinker)
          blinker)))
 
+(deftest test-add []
+  (is (= (add blinker glider) 
+         (set/union blinker glider)))
+  (is (= (add "blinker" glider)
+         (set/union blinker glider)))
+  (is (= (add blinker glider glider2) 
+         (set/union blinker glider glider2)))
+  (is (= (add "blinker" glider glider2)
+         (set/union blinker glider glider2))))
 
 (deftest test-translate []
   (is (= (translate blinker 5 5)
@@ -24,7 +35,7 @@
   (is (= (translate "blinker" -5 -5)
          #{[-3 -4][-3 -3][-3 -2]})))
 
-(deftest test-rotate []
+(deftest test-rotate 
   (is (= (rotate blinker 90)
          #{[1 -2][2 -2][3 -2]})) 
   (is (= (rotate "blinker" 90)
