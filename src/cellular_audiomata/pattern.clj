@@ -1,3 +1,4 @@
+
 (ns cellular-audiomata.pattern
   (:require [clojure.set :refer [union] :as set]))
 
@@ -30,8 +31,7 @@
 (defn translate [p dx dy]
   (let [p (if (instance? String p) (get-pattern p) p)
         s (seq p)]
-    (->> (map #(translate* % dx dy) s)
-         (set))))  
+    (set (map #(translate* % dx dy) s))))
 
 (defn- rotate*
   [[x y] d cx cy]
@@ -49,8 +49,7 @@
   ([p d cx cy]
    (let [p (if (instance? String p) (get-pattern p) p)
          s (seq p)]
-     (->> (map #(rotate* % d cx cy) s)
-          (set)))))
+     (set (map #(rotate* % d cx cy) s)))))
 
 (defn- flip* [[x y] axis a]
   (let [x? (= axis :x)
@@ -61,12 +60,11 @@
 (defn flip [p axis a]
   (let [p (if (instance? String p) (get-pattern p) p)
         s (seq p)]
-    (->> (map #(flip* % axis a) s)
-         (set))))    
+    (set (map #(flip* % axis a) s))))
  
 (defn store-pattern 
   ([name p]
-   (let [pattern (into #{} p)]
+   (let [pattern (set p)]
      (swap! pattern-registry-ref assoc name pattern)
      pattern)))
 
