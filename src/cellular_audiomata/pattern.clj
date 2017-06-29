@@ -1,5 +1,6 @@
 (ns cellular-audiomata.pattern
-  (:require [clojure.set :refer [union] :as set]))
+  (:require [clojure.set :refer [union] :as set]
+            [clojure.pprint :refer [pprint]]))
 
 (defonce ^:private pattern-registry-ref (atom {}))
 
@@ -70,30 +71,40 @@
 (defmulti pattern! (fn [patterns opts]
                      (first patterns)))             
 
-(defmethod pattern! :add [pattern opts]
-  :add)
+(defmethod pattern! :add [pattern parent-opts & more]
+  (let [[command opts & children] pattern
+         {:keys [pattern]} opts]
+    [command :pattern pattern :more children]))
 
-(defmethod pattern! :flip [pattern opts]
-  :flip)
+(defmethod pattern! :flip [pattern parent-opts & more]
+  (let [[command opts & children] pattern
+         {:keys [pattern axis a]} opts]
+    [command :axis axis :a a :more children]))
 
-(defmethod pattern! :rotate [pattern opts]
-  :rotate)
+(defmethod pattern! :rotate [pattern parent-opts & more]
+  (let [[command opts & children] pattern
+         {:keys [pattern d cx cy], :or {cx 0 cy 0}} opts]
+    [command :pattern pattern :d d :cx cx :cy cy :more children]))
 
-(defmethod pattern! :translate [pattern opts]
-  :translate)
+(defmethod pattern! :translate [pattern parent-opts & more]
+  (let [[command opts & children] pattern
+         {:keys [pattern dx dy]} opts]
+    [command :pattern pattern :dx dx :dy dy :more children]))
 
-(defmethod pattern! :default [patterns opts]
+(defmethod pattern! :default [patterns parent-opts & more]
   (cond
    (sequential? (first patterns))
-   (map #(pattern! % opts) patterns)
+   (map #(pattern! % parent-opts) patterns)
    (nil? (first patterns))
    nil))
 
 (defn create-world [patterns]
   (pattern! patterns {}))
 
-(create-world [[:add {:pattern "blinker" :x 5 :y 5} :as "blinker2"]
-               [:flip {:pattern "glider" :axis :x :a 5} :as "flipped"]])
+(pprint (create-world [[:add {:pattern "blinker"} :as "blinker2"]
+                       [:flip {:pattern "glider" :axis :x :a 5} :as "flipped"]
+                       [:rotate {:pattern glider2 :d 180} :as "rotated"]
+                       [:translate {:pattern light-spaceship :dx 10 :dy 10}]]))
 (comment
   "2nd example of each seems better. Check hiccup and play-cljs"
   (add pattern-name :at x y :rotate 90 :around x2 y2)
