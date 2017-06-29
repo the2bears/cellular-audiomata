@@ -1,4 +1,3 @@
-
 (ns cellular-audiomata.pattern
   (:require [clojure.set :refer [union] :as set]))
 
@@ -46,7 +45,7 @@
 (defn rotate
   ([p d]
    (rotate p d 0 0)) 
-  ([p d cx cy]
+ ([p d cx cy]
    (let [p (if (instance? String p) (get-pattern p) p)
          s (seq p)]
      (set (map #(rotate* % d cx cy) s)))))
@@ -66,7 +65,34 @@
   ([name p]
    (let [pattern (set p)]
      (swap! pattern-registry-ref assoc name pattern)
-     pattern)))
+    pattern)))
+
+(defmulti pattern! (fn [patterns opts]
+                     (first patterns)))             
+
+(defmethod pattern! :add [pattern opts]
+  (prn :add))
+
+(defmethod pattern! :flip [pattern opts]
+  (prn :flip))
+
+(defmethod pattern! :rotate [pattern opts]
+  (prn :rotate))
+
+(defmethod pattern! :translate [pattern opts]
+  (prn :translate))
+
+(defmethod pattern! :default [patterns opts]
+  (cond
+   (sequential? (first patterns))
+   (run! #(pattern! % opts) patterns)
+   (nil? (first patterns))
+   nil))
+
+(defn create-world [patterns]
+  (pattern! patterns {}))
+
+(create-world [[:add {:pattern "blinker" :x 5 :y 5} :as "blinker2"]])
 
 (comment
   "2nd example of each seems better. Check hiccup and play-cljs"
@@ -77,7 +103,12 @@
   (generate-grid [[:pattern {:name pattern-name :x x :y y 
                              :rotate 90 :cx x2 :cy y2}]
                   [:pattern {:load resource :as pattern-name2 :x x :y y
-                             :flip-vertical y2}]]))
+                             :flip-vertical y2}]])
+  [:add {:pattern "blinker" :x x :y y} :as "blinker2"]
+  [:add {:pattern [:rotate {:pattern glider :d 90 :cx 2 :cy 2}]} :as "pattern1"]
+  [:flip {:pattern "glider" :axis :x :a 5} :as "flipped"]
+  [:translate {:pattern [:rotate {:pattern blinker :d 180}] :dx 4 :dy -2}])
+
     
 ; patterns
 (def blinker #{[2 1] [2 2] [2 3]})
