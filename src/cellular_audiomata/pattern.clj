@@ -45,7 +45,7 @@
 (defn rotate
   ([p d]
    (rotate p d 0 0)) 
- ([p d cx cy]
+  ([p d cx cy]
    (let [p (if (instance? String p) (get-pattern p) p)
          s (seq p)]
      (set (map #(rotate* % d cx cy) s)))))
@@ -71,29 +71,29 @@
                      (first patterns)))             
 
 (defmethod pattern! :add [pattern opts]
-  (prn :add))
+  :add)
 
 (defmethod pattern! :flip [pattern opts]
-  (prn :flip))
+  :flip)
 
 (defmethod pattern! :rotate [pattern opts]
-  (prn :rotate))
+  :rotate)
 
 (defmethod pattern! :translate [pattern opts]
-  (prn :translate))
+  :translate)
 
 (defmethod pattern! :default [patterns opts]
   (cond
    (sequential? (first patterns))
-   (run! #(pattern! % opts) patterns)
+   (map #(pattern! % opts) patterns)
    (nil? (first patterns))
    nil))
 
 (defn create-world [patterns]
   (pattern! patterns {}))
 
-(create-world [[:add {:pattern "blinker" :x 5 :y 5} :as "blinker2"]])
-
+(create-world [[:add {:pattern "blinker" :x 5 :y 5} :as "blinker2"]
+               [:flip {:pattern "glider" :axis :x :a 5} :as "flipped"]])
 (comment
   "2nd example of each seems better. Check hiccup and play-cljs"
   (add pattern-name :at x y :rotate 90 :around x2 y2)
