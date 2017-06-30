@@ -6,7 +6,7 @@ In order to do a Life sequencer, you need a Life engine: [conway.clj](https://gi
 
 The engine is simple, creating content is almost always the hard part. This is my first try at a DSL, but here is it: [pattern.clj](https://github.com/the2bears/cellular-audiomata/blob/master/src/cellular_audiomata/pattern.clj). Note this is still very early and likely will change a lot.
 
-The examples below return sets of x.y tuples such as:
+The examples below return sets of x,y tuples such as:
 
 ```clojure
 (def blinker #{[2 1] [2 2] [2 3]})
