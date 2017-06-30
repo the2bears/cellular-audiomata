@@ -12,18 +12,24 @@
 (defn clear-registry []
   (reset! pattern-registry-ref {}))
 
-(defn- get-pattern [n]
-  (cond (string? n) ((pattern-registry) n #{})
-        (set? n) n
-        (sequential? n) (pattern! n #{})))
+(defprotocol Pattern
+  (resolve-pattern [n]))
+
+(extend-protocol Pattern
+  String
+  (resolve-pattern [n] ((pattern-registry) n #{}))
+  clojure.lang.PersistentHashSet
+  (resolve-pattern [n] n)
+  clojure.lang.PersistentVector
+  (resolve-pattern [n] (pattern! n #{}))) 
 
 (defn add
   ([a]
-   (let [a (get-pattern a)]
+   (let [a (resolve-pattern a)]
      a))
   ([a b]
-   (let [a (get-pattern a)
-         b (get-pattern b)]
+   (let [a (resolve-pattern a)
+         b (resolve-pattern b)]
      (set/union a b)))
   ([a b & more]
    (let [coll (concat [a b] more)]
@@ -33,7 +39,7 @@
   [(+ x dx) (+ y dy)])
 
 (defn translate [p dx dy]
-  (let [p (get-pattern p)
+  (let [p (resolve-pattern p)
         s (seq p)]
     (set (map #(translate* % dx dy) s))))
 
@@ -51,7 +57,7 @@
   ([p d]
    (rotate p d 0 0)) 
   ([p d cx cy]
-   (let [p (get-pattern p)
+   (let [p (resolve-pattern p)
          s (seq p)]
      (set (map #(rotate* % d cx cy) s)))))
 
@@ -62,7 +68,7 @@
     [(if x? (+ a d) x) (if y? (+ a d) y)]))
 
 (defn flip [p axis a]
-  (let [p (get-pattern p)
+  (let [p (resolve-pattern p)
         s (seq p)]
     (set (map #(flip* % axis a) s))))
  
@@ -83,25 +89,25 @@
 (defmethod pattern! :add [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern]} opts
-        p (get-pattern pattern)]
+        p (resolve-pattern pattern)]
     (maybe-store-pattern (add p) children)))
 
 (defmethod pattern! :flip [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern axis a]} opts
-        p (get-pattern pattern)]
+        p (resolve-pattern pattern)]
     (maybe-store-pattern (flip p axis a) children)))
 
 (defmethod pattern! :rotate [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern d cx cy], :or {cx 0 cy 0}} opts
-        p (get-pattern pattern)]
+        p (resolve-pattern pattern)]
     (maybe-store-pattern (rotate p d cx cy) children)))
 
 (defmethod pattern! :translate [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern dx dy]} opts
-        p (get-pattern pattern)]
+        p (resolve-pattern pattern)]
     (maybe-store-pattern (translate p dx dy) children)))
 
 (defmethod pattern! :default [patterns parent-opts]
@@ -130,3 +136,8 @@
                                                               [:add {:pattern glider2}]]
                                                     :dx 10 :dy 10}]} :as "something"]
                        [:translate {:pattern "something" :dx -20 :dy -20}]])) 
+
+(-> blinker
+    (rotate 90)
+    (translate 5 1)
+    (flip :x 6))
