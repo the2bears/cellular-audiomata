@@ -5,14 +5,14 @@
   
 (defn pattern-test-fixture [f]
   (clear-registry)
-  (store-pattern "blinker" blinker)
-  (store-pattern "glider" glider)
+  (store-pattern blinker "blinker")
+  (store-pattern glider "glider")
   (f))
 
 (use-fixtures :each pattern-test-fixture)
 
 (deftest test-store-pattern []
-  (is (= (store-pattern "blinker" blinker)
+  (is (= (store-pattern blinker "blinker")
          blinker)))
 
 (deftest test-add []
