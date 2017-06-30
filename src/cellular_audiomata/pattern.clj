@@ -90,7 +90,6 @@
   (let [[command opts & children] pattern
         {:keys [pattern axis a]} opts
         p (get-pattern pattern)]
-    (if children (prn :more children) (prn :no-more))
     (maybe-store-pattern (flip p axis a) children)))
 
 (defmethod pattern! :rotate [pattern parent-opts]
@@ -125,9 +124,9 @@
                        [:flip {:pattern glider :axis :x :a 5} :as "flipped"]
                        [:rotate {:pattern glider2 :d 90} :as "rotated"]
                        [:translate {:pattern light-spaceship :dx 10 :dy 10}]]))
-(comment
-  [:add {:pattern "blinker" :x x :y y} :as "blinker2"]
-  [:add {:pattern [:rotate {:pattern glider :d 90 :cx 2 :cy 2}]} :as "pattern1"]
-  [:flip {:pattern "glider" :axis :x :a 5} :as "flipped"]
-  [:translate {:pattern [:rotate {:pattern blinker :d 180}] :dx 4 :dy -2}])
 
+
+(pprint (create-world [[:add {:pattern [:translate {:pattern [[:add {:pattern blinker}]
+                                                              [:add {:pattern glider2}]]
+                                                    :dx 10 :dy 10}]} :as "something"]
+                       [:translate {:pattern "something" :dx -20 :dy -20}]])) 
