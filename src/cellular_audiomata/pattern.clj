@@ -72,6 +72,11 @@
      (swap! pattern-registry-ref assoc name pattern)
     pattern)))
 
+(defn- maybe-store-pattern [p children]
+  (if (and children (= :as (first children)))
+      (store-pattern p (second children))
+      p))
+
 (defmulti pattern! (fn [patterns opts]
                      (first patterns)))             
 
@@ -79,26 +84,26 @@
   (let [[command opts & children] pattern
         {:keys [pattern]} opts
         p (get-pattern pattern)]
-    (add p)))
+    (maybe-store-pattern (add p) children)))
 
 (defmethod pattern! :flip [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern axis a]} opts
         p (get-pattern pattern)]
     (if children (prn :more children) (prn :no-more))
-    (flip p axis a)))
+    (maybe-store-pattern (flip p axis a) children)))
 
 (defmethod pattern! :rotate [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern d cx cy], :or {cx 0 cy 0}} opts
         p (get-pattern pattern)]
-    (rotate p d cx cy)))
+    (maybe-store-pattern (rotate p d cx cy) children)))
 
 (defmethod pattern! :translate [pattern parent-opts]
   (let [[command opts & children] pattern
         {:keys [pattern dx dy]} opts
         p (get-pattern pattern)]
-    (translate p dx dy)))
+    (maybe-store-pattern (translate p dx dy) children)))
 
 (defmethod pattern! :default [patterns parent-opts]
   (cond
