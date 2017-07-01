@@ -119,25 +119,3 @@
 
 (defn create-world [patterns]
   (pattern! patterns {}))
-
-; patterns
-(def blinker #{[2 1] [2 2] [2 3]})
-(def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
-(def glider2 #{[3 0] [3 1] [3 2] [2 2] [1 1]})
-(def light-spaceship #{[2 0] [4 0] [1 1] [1 2] [1 3] [4 3] [1 4] [2 4] [3 4]})
-
-(pprint (create-world [[:add {:pattern [:translate {:pattern blinker :dx 2 :dy 0}]}]
-                       [:flip {:pattern glider :axis :x :a 5} :as "flipped"]
-                       [:rotate {:pattern glider2 :d 90} :as "rotated"]
-                       [:translate {:pattern light-spaceship :dx 10 :dy 10}]]))
-
-
-(pprint (create-world [[:add {:pattern [:translate {:pattern [[:add {:pattern blinker}]
-                                                              [:add {:pattern glider2}]]
-                                                    :dx 10 :dy 10}]} :as "something"]
-                       [:translate {:pattern "something" :dx -20 :dy -20}]])) 
-
-(-> blinker
-    (rotate 90)
-    (translate 5 1)
-    (flip :x 6))

@@ -2,6 +2,12 @@
   (:require [clojure.set :as set]
             [clojure.test :refer :all]
             [cellular-audiomata.pattern :refer :all]))
+
+; patterns
+(def blinker #{[2 1] [2 2] [2 3]})
+(def glider #{[2 0] [2 1] [2 2] [1 2] [0 1]})
+(def glider2 #{[3 0] [3 1] [3 2] [2 2] [1 1]})
+(def light-spaceship #{[2 0] [4 0] [1 1] [1 2] [1 3] [4 3] [1 4] [2 4] [3 4]})
   
 (defn pattern-test-fixture [f]
   (clear-registry)
