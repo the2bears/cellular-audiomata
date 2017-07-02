@@ -1,6 +1,13 @@
 (ns cellular-audiomata.pattern
   (:require [clojure.set :refer [union] :as set]
-            [clojure.pprint :refer [pprint]]))
+            [clojure.pprint :refer [pprint]]
+            [clojure.spec.alpha :as s]
+            [clojure.spec.gen.alpha :as gen]))
+
+(s/def ::point (s/coll-of int? :kind vector? :count 2))
+(s/def ::pattern (s/coll-of ::point :kind set?))
+
+(s/def ::degree #{0 90 180 270})
 
 (declare pattern!)
 
