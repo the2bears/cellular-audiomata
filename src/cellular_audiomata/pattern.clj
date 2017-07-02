@@ -24,6 +24,7 @@
   (resolve-pattern [n] (pattern! n #{}))) 
 
 (defn add
+  "Combines n patterns together, returning the set union of all patterns passed in. If only one pattern is passed, just that pattern is returned."
   ([a]
    (let [a (resolve-pattern a)]
      a))
@@ -38,7 +39,9 @@
 (defn- translate* [[x y] dx dy]
   [(+ x dx) (+ y dy)])
 
-(defn translate [p dx dy]
+(defn translate 
+  "Accepts a pattern p, and returns a pattern where all points within that pattern have been translated by dx and dy"
+  [p dx dy]
   (let [p (resolve-pattern p)
         s (seq p)]
     (set (map #(translate* % dx dy) s))))
@@ -54,6 +57,7 @@
     (translate* p cx cy)))  
 
 (defn rotate
+  "Accepts a pattern p, and rotates it by degrees d around the point given by cx and cy. If not point is specified, the pattern is rotated around 0,0. Rotations will only occur for 0, 90, 180, and 270 degrees."
   ([p d]
    (rotate p d 0 0)) 
   ([p d cx cy]
@@ -67,12 +71,15 @@
         d (if x? (- a x) (- a y))]
     [(if x? (+ a d) x) (if y? (+ a d) y)]))
 
-(defn flip [p axis a]
+(defn flip
+  "Accepts a pattern p, and flips it on the axis (:x or :y) along the line designated by the value a."
+  [p axis a]
   (let [p (resolve-pattern p)
         s (seq p)]
     (set (map #(flip* % axis a) s))))
  
-(defn store-pattern 
+(defn store-pattern
+  "Stores the pattern p in the registry, mapped to the given name." 
   ([p name]
    (let [pattern (set p)]
      (swap! pattern-registry-ref assoc name pattern)
@@ -117,5 +124,7 @@
    (nil? (first patterns))
    nil))
 
-(defn create-world [patterns]
+(defn create-world 
+  "Accepts a vector of pattern vectors defined by the DSL, combining the patterns into a single set of points."
+  [patterns]
   (pattern! patterns {}))
