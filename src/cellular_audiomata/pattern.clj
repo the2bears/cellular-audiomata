@@ -5,9 +5,23 @@
             [clojure.spec.gen.alpha :as gen]))
 
 (s/def ::point (s/coll-of int? :kind vector? :count 2))
-(s/def ::pattern (s/coll-of ::point :kind set?))
-
+(s/def ::pattern (s/or :points-set (s/coll-of ::point :kind set?)
+                       :name string?
+                       :command-vec (s/coll-of ::command-vec :kind vector?)))
 (s/def ::degree #{0 90 180 270})
+(s/def ::cx int?)
+(s/def ::cy int?)
+(s/def ::axis #{:x :y})
+(s/def ::a int?)
+(s/def ::dx int?)
+(s/def ::dy int?)
+(s/def ::command #{:add :flip :rotate :translate})
+(s/def ::command-vec (s/cat :command ::command :pattern ::pattern))
+(s/def ::add-map (s/keys :req [::pattern]))
+(s/def ::flip-map (s/keys :req [::pattern ::axis ::a]))
+(s/def ::rotate-map (s/keys :req [::pattern ::degree]
+                            :opt [::cx ::cy]))
+(s/def ::translate-map (s/keys :req [::pattern ::dx ::dy]))
 
 (declare pattern!)
 
